@@ -20,11 +20,11 @@ padding: 5px 10px;
 `;
 
 const DummyComponent = () => {
-  const {data, fetchNextPage, skip, error, updateData} = useFetch(
+  const {data, fetchNextPage, changeUrl, error, updateData} = useFetch(
       'https://api.instantwebtools.net/v1/passenger?size=10&page=',
       (response) => console.log(response));
-  if(error){
-    console.error(error)
+  if (error) {
+    console.error(error);
   }
   return (
       <>
@@ -32,22 +32,23 @@ const DummyComponent = () => {
             text={'update data'}
             cb={updateData}
         />}
-              <div>
-                <ButtonComponent
-                    text={'change URL'}
-                    cb={skip}
-                />
-                <ButtonComponent
-                    text={'More'}
-                    cb={fetchNextPage}
-                />
-                <List>
-                  {data && data.map(item => {
-                    const key = uuidv4();
-                    return <ListItem key={key}>{item.name}</ListItem>;
-                  })}
-                </List>
-              </div>
+        <div>
+          <ButtonComponent
+              text={'change URL'}
+              cb={() => changeUrl(
+                  'https://api.instantwebtools.net/v1/airlines?size=10&page=')}
+          />
+          <ButtonComponent
+              text={'More'}
+              cb={fetchNextPage}
+          />
+          <List>
+            {data && data.map(item => {
+              const key = uuidv4();
+              return <ListItem key={key}>{item.name}</ListItem>;
+            })}
+          </List>
+        </div>
       </>
   );
 };

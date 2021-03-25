@@ -3,50 +3,46 @@ import {useState, useEffect, useCallback, useRef} from 'react';
 // In order to enable the useFetch hook fetch data by pages
 // it is required to return a function that will be able to changes the page parameter of the request
 
-
-const demoData = [
-  {name: 'Borys Petrov', id: 1},
-  {name: 'Borys Petrov', id: 2},
-  {name: 'Borys Petrov', id: 3},
-  {name: 'Borys Petrov', id: 4},
-  {name: 'Borys Petrov', id: 5},
-  {name: 'Borys Petrov', id: 6},
-];
-
-const useFetch = (iUrl, callBack) => {
+const useFetch = (InitialUrl, callBack) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(3);
   const [isInitialUrl, setIsInitialUrl] = useState(false);
-  const [url, setUrl] = useState(
-      'https://api.instantwebtools.net/v1/passenger?size=10&page=');
+  const [iUrl, setIUrl] = useState(InitialUrl);
+  const [url, setUrl] = useState('');
 
-  const fetchingRef = useRef(false)
-
+  const fetchingRef = useRef(false);
 
   const fetchNextPage = () => {
     setPage(page + 1);
   };
 
   const updateData = useCallback(() => {
-    console.log(fetchingRef.current);
-    if(!fetchingRef.current){
-      setData(demoData)
-    };
-  }, []);
+    if (!fetchingRef.current) {
+      setData(data);
+    }
+    ;
+  }, [data]);
 
-  const skip = () => {
+  const changeUrl = (url) => {
     setData([]);
     setIsInitialUrl(!isInitialUrl);
-    setUrl(isInitialUrl
-        ? 'https://api.instantwebtools.net/v1/passenger?size=10&page='
-        : 'https://api.instantwebtools.net/v1/airlines?size=10&page=');
+    console.log('dog');
+    if(url !== iUrl){
+      setUrl(url);
+    }else{
+      setUrl(iUrl)
+    }
   };
+
+  useEffect(() => {
+    console.log('woof');
+  }, [url]);
 
   useEffect(() => {
     let isMounted = true;
     fetchingRef.current = true;
-    fetch(url + page).then(res => {
+    fetch(iUrl + page).then(res => {
       if (res.status === 200) {
         fetchingRef.current = false;
         return res.json();
@@ -68,7 +64,7 @@ const useFetch = (iUrl, callBack) => {
     };
   }, [url, page]);
 
-  return {data, error, skip, updateData, fetchNextPage};
+  return {data, error, changeUrl, updateData, fetchNextPage};
 };
 
 export default useFetch;
